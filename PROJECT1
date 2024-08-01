@@ -1,0 +1,116 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+// Define the structure for a student record
+typedef struct Student {
+    int id;
+    char name[50];
+    int age;
+    char grade[5];
+    struct Student* next;
+} Student;
+
+// Function to create a new student record
+Student* createStudent(int id, char* name, int age, char* grade) {
+    Student* newStudent = (Student*)malloc(sizeof(Student));
+    newStudent->id = id;
+    strcpy(newStudent->name, name);
+    newStudent->age = age;
+    strcpy(newStudent->grade, grade);
+    newStudent->next = NULL;
+    return newStudent;
+}
+
+// Function to add a student to the linked list
+void addStudent(Student** head, int id, char* name, int age, char* grade) {
+    Student* newStudent = createStudent(id, name, age, grade);
+    newStudent->next = *head;
+    *head = newStudent;
+    printf("Student added successfully.\n");
+}
+
+// Function to delete a student from the linked list
+void deleteStudent(Student** head, int id) {
+    Student* temp = *head;
+    Student* prev = NULL;
+
+    // If the student to be deleted is the head
+    if (temp != NULL && temp->id == id) {
+        *head = temp->next;
+        free(temp);
+        printf("Student deleted successfully.\n");
+        return;
+    }
+
+    // Search for the student to be deleted
+    while (temp != NULL && temp->id != id) {
+        prev = temp;
+        temp = temp->next;
+    }
+
+    // If student was not found
+    if (temp == NULL) {
+        printf("Student not found.\n");
+        return;
+    }
+
+    // Unlink the student from the linked list
+    prev->next = temp->next;
+    free(temp);
+    printf("Student deleted successfully.\n");
+}
+
+// Function to display all student records
+void displayStudents(Student* head) {
+    Student* temp = head;
+    while (temp != NULL) {
+        printf("ID: %d, Name: %s, Age: %d, Grade: %s\n", temp->id, temp->name, temp->age, temp->grade);
+        temp = temp->next;
+    }
+}
+
+// Main function
+int main() {
+    Student* head = NULL;
+    int choice, id, age;
+    char name[50], grade[5];
+
+    while (1) {
+        printf("\nStudent Record Management System\n");
+        printf("1. Add Student\n");
+        printf("2. Delete Student\n");
+        printf("3. Display Students\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter Student ID: ");
+                scanf("%d", &id);
+                printf("Enter Name: ");
+                scanf("%s", name);
+                printf("Enter Age: ");
+                scanf("%d", &age);
+                printf("Enter Grade: ");
+                scanf("%s", grade);
+                addStudent(&head, id, name, age, grade);
+                break;
+            case 2:
+                printf("Enter Student ID to delete: ");
+                scanf("%d", &id);
+                deleteStudent(&head, id);
+                break;
+            case 3:
+                displayStudents(head);
+                break;
+            case 4:
+                exit(0);
+            default:
+                printf("Invalid choice! Please try again.\n");
+        }
+    }
+
+    return 0;
+}
